@@ -12,8 +12,12 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-import { headers } from "next/headers"; // added
-import ContextProvider from '@/context'
+import { headers } from "next/headers";
+
+import { cookieToInitialState } from "wagmi";
+
+import { config } from "@/config";
+import Web3ModalProvider from "@/context";
 
 export const metadata: Metadata = {
   title: "Zend",
@@ -25,13 +29,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookies = headers().get('cookie')
+  const initialState = cookieToInitialState(config, headers().get("cookie"));
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ContextProvider cookies={cookies}>{children}</ContextProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Web3ModalProvider initialState={initialState}>
+          {children}
+        </Web3ModalProvider>
       </body>
     </html>
   );
